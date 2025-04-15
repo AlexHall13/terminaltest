@@ -1,21 +1,74 @@
-<!doctype html>
-<html class="dark" lang="en" style="color-scheme: dark;">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-
-  <link rel="icon" type="image/png" href="/icon.png" />
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Web-based terminal powered by Svelte" />
-
-  <title>M4TT72 | Terminal</title>
+  <title>Dead Save Terminal</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: monospace;
+      margin: 0;
+      padding: 1rem;
+    }
+    #terminal {
+      max-width: 800px;
+      margin: 0 auto;
+      white-space: pre-wrap;
+    }
+    .input-line {
+      display: flex;
+    }
+    .input-line::before {
+      content: "> ";
+    }
+    input {
+      background: transparent;
+      border: none;
+      color: #0f0;
+      font: inherit;
+      outline: none;
+      width: 100%;
+    }
+    .output {
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
+<body>
+  <div id="terminal">
+    <div class="output">Welcome to the Dead Save Terminal. Type "help" to begin.</div>
+    <div class="input-line"><input id="commandInput" autofocus /></div>
+  </div>
 
-<body class="min-h-screen font-mono antialiased">
-  <div id="app" class="h-screen p-4"></div>
+  <script>
+    function appendInputLine() {
+      const inputLine = document.createElement("div");
+      inputLine.className = "input-line";
+      const inputField = document.createElement("input");
+      inputField.id = "commandInput";
+      inputLine.appendChild(inputField);
+      terminal.appendChild(inputLine);
+      inputField.focus();
+      inputField.addEventListener("keydown", onCommandSubmit);
+    }
 
-  <script type="module" src="/src/main.ts"></script>
-</body>
+    const terminal = document.getElementById("terminal");
+    const commands = {
+      help: "Available commands:\nhelp - Show this message\nconnect.sarah - ???\ncat diary.txt - View personal entry\nls - List directory\nclear - Clear the terminal",
+      ls: "diary.txt\nproject_e.dat\nconnect.sarah\nlogs/",
+      "cat diary.txt": "March 12. I still hear her voice when the game boots. I think she's trapped in the code...",
+      "connect.sarah": "[Error: Connection unstable...Trying again...Connection established. Welcome, Sarah.]",
+      clear: "__clear__"
+    };
 
-</html>
+    function onCommandSubmit(e) {
+      if (e.key === "Enter") {
+        const input = e.target;
+        const cmd = input.value.trim();
+
+        const line = document.createElement("div");
+        line.className = "output";
+        line.textContent = `> ${cmd}`;
+        terminal.insertBefore(line, input.parentElement);
